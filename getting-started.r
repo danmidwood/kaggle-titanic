@@ -8,6 +8,9 @@ library(rattle)
 library(rpart.plot)
 library(RColorBrewer)
 
+#install.packages('randomForest')
+library(randomForest)
+
 train <- read.csv('train.csv')
 test <- read.csv('test.csv')
 
@@ -32,10 +35,23 @@ famIDs <- famIDs[famIDs$Freq <= 2,]
 combi$FamilyID[combi$FamilyID %in% famIDs$Var1] <- 'Small'
 combi$FamilyID <- factor(combi$FamilyID)
 
+Agefit <- rpart(Age ~ Pclass + Sex + SibSp + Parch + Fare + Embarked + Title + FamilySize, data=combi[!is.na(combi$Age),], method="anova")
+combi$Age[is.na(combi$Age)] <- predict(Agefit, combi[is.na(combi$Age),])
+combi$Embarked[which(combi$Embarked == '')] = "S"
+combi$Embarked <- factor(combi$Embarked)
+combi$Fare[which(is.na(combi$Fare))] <- median(combi$Fare, na.rm=TRUE)
+
+combi$FamilyID2 <- combi$FamilyID
+combi$FamilyID2 <- as.character(combi$FamilyID2)
+combi$FamilyID2[combi$FamilySize <= 3] <- 'Small'
+combi$FamilyID2 <- factor(combi$FamilyID2)
+
 train <- combi[1:891,]
 test <- combi[892:1309,]
 
-fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID, data=train, method="class")
+set.seed(415)
+
+fit <- randomForest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID2, data=train, importance=TRUE, ntree=2000)
 
 fancyRpartPlot(fit)
 
