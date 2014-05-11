@@ -14,7 +14,7 @@ test <- read.csv('test.csv')
 library(rpart)
 
 fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data=train,
-             method="class", control=rpart.control(minsplit=2, cp=0))
+             method="class", control=rpart.control(minsplit=10))
 
 fancyRpartPlot(fit)
 
