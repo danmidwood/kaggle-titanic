@@ -11,6 +11,9 @@ library(RColorBrewer)
 #install.packages('randomForest')
 library(randomForest)
 
+#install.packages('party')
+library(party)
+
 train <- read.csv('train.csv')
 test <- read.csv('test.csv')
 
@@ -50,11 +53,8 @@ train <- combi[1:891,]
 test <- combi[892:1309,]
 
 set.seed(415)
+fit <- cforest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID, data = train, controls=cforest_unbiased(ntree=2000, mtry=3))
 
-fit <- randomForest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID2, data=train, importance=TRUE, ntree=2000)
-
-fancyRpartPlot(fit)
-
-Prediction <- predict(fit, test, type = "class")
+Prediction <- predict(fit, test, OOB=TRUE, type = "response")
 submit <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
 write.csv(submit, file = "guess.csv", row.names = FALSE)
