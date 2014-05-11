@@ -14,10 +14,15 @@ test <- read.csv('test.csv')
 library(rpart)
 
 fit <- rpart(Survived ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked, data=train,
-             method="class", control=rpart.control(minsplit=10))
+             method="class", control=rpart.control(minsplit=5, cp=0))
 
-fancyRpartPlot(fit)
+new.fit <- snip.rpart(fit, toss = 33)
+new.fit <- snip.rpart(new.fit, toss = 129)
+new.fit <- snip.rpart(new.fit, toss = 156)
+new.fit <- snip.rpart(new.fit, toss = 106)
 
-Prediction <- predict(fit, test, type = "class")
+fancyRpartPlot(new.fit)
+
+Prediction <- predict(new.fit, test, type = "class")
 submit <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
 write.csv(submit, file = "guess.csv", row.names = FALSE)
