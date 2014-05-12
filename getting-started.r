@@ -25,8 +25,8 @@ combi$Title <- sapply(combi$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]
 combi$Title <- sub(' ', '', combi$Title)
 
 combi$Title[combi$Title %in% c('Mme', 'Mlle')] <- 'Mlle'
-combi$Title[combi$Title %in% c('Capt', 'Don', 'Major', 'Sir')] <- 'Sir'
-combi$Title[combi$Title %in% c('Dona', 'Lady', 'the Countess', 'Jonkheer')] <- 'Lady'
+combi$Title[combi$Title %in% c('Capt', 'Don', 'Major', 'Sir', 'Jonkheer')] <- 'Sir'
+combi$Title[combi$Title %in% c('Dona', 'Lady', 'the Countess')] <- 'Lady'
 combi$Title <- factor(combi$Title)
 combi$FamilySize <- combi$SibSp + combi$Parch + 1
 combi$Surname <- sapply(combi$Name, FUN=function(x) {strsplit(x, split='[,.]')[[1]][1]})
