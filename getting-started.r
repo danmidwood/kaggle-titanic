@@ -44,24 +44,11 @@ combi$Embarked[which(combi$Embarked == '')] = "S"
 combi$Embarked <- factor(combi$Embarked)
 combi$Fare[which(is.na(combi$Fare))] <- median(combi$Fare, na.rm=TRUE)
 
-combi$Deck <- substr(combi$Cabin, 0, 1)
-
-combi$Deck[which(combi$Deck == 'A')] = 1
-combi$Deck[which(combi$Deck == 'B')] = 2
-combi$Deck[which(combi$Deck == 'C')] = 3
-combi$Deck[which(combi$Deck == '')] = 3
-combi$Deck[which(combi$Deck == 'D')] = 4
-combi$Deck[which(combi$Deck == 'E')] = 5
-combi$Deck[which(combi$Deck == 'F')] = 6
-combi$Deck[which(combi$Deck == 'G')] = 7
-combi$Deck[which(combi$Deck == 'T')] = 8
-combi$Deck <- as.numeric(combi$Deck)
-
 train <- combi[1:891,]
 test <- combi[892:1309,]
 
 set.seed(415)
-fit <- cforest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID + Deck, data = train, controls=cforest_unbiased(ntree=2000, mtry=3))
+fit <- cforest(as.factor(Survived) ~ Pclass + Sex + Age + SibSp + Parch + Fare + Embarked + Title + FamilySize + FamilyID, data = train, controls=cforest_unbiased(ntree=2000, mtry=3))
 
 Prediction <- predict(fit, test, OOB=TRUE, type = "response")
 submit <- data.frame(PassengerId = test$PassengerId, Survived = Prediction)
